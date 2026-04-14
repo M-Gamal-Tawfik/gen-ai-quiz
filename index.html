@@ -23,11 +23,42 @@ h1{text-align:center;color:#2c3e50;margin-top:0;}
 .results-container{text-align:center;display:none;}
 .score{font-size:2rem;font-weight:bold;color:#28a745;margin:20px 0;}
 .restart-btn{background-color:#28a745;color:white;border:none;padding:12px 25px;border-radius:5px;font-size:1rem;cursor:pointer;}
+.header-logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .header-logos h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .logo {
+            max-height: 65px; /* Keeps the logos from getting too massive */
+            width: auto;
+            object-fit: contain;
+        }
+        /* This makes it look good on mobile phones */
+        @media (max-width: 600px) {
+            .header-logos {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
 </style>
 </head>
 <body>
 <div class="quiz-container" id="quiz">
     <h1>ISTQB CT-GenAi Quiz</h1>
+    <div class="header-logos">
+        <img src="images.png" alt="ISTQB Logo" class="logo">
+        <h1>Generative AI Testing Quiz</h1>
+        <img src="dowenload.jpg" alt="Gen AI Logo" class="logo">
+    </div>
     <div id="question-container">
         <div class="progress" id="progress">Loading...</div>
         <div class="question-text" id="question">Loading question...</div>
