@@ -1,285 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generative AI Testing Quiz</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .quiz-container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 800px;
-            padding: 40px;
-        }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-top: 0;
-        }
-        .question-text {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        .options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .option-btn {
-            background-color: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 15px;
-            font-size: 1rem;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.3s ease;
-        }
-        .option-btn:hover {
-            background-color: #e2e6ea;
-            border-color: #dae0e5;
-        }
-        .option-btn.correct {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-        .option-btn.wrong {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-        .option-btn:disabled {
-            cursor: not-allowed;
-        }
-        .explanation {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f4f8;
-            border-left: 4px solid #17a2b8;
-            border-radius: 4px;
-            display: none;
-            line-height: 1.5;
-        }
-        /* NEW: Styling specifically for the syllabus mapping */
-        .syllabus-mapping {
-            display: block;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed #a1c4cc;
-            font-size: 0.9rem;
-            color: #495057;
-        }
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            align-items: center;
-        }
-        .next-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            display: none;
-        }
-        .next-btn:hover {
-            background-color: #0056b3;
-        }
-        .progress {
-            color: #6c757d;
-            font-weight: bold;
-        }
-        .results-container {
-            text-align: center;
-            display: none;
-        }
-        .score {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #28a745;
-            margin: 20px 0;
-        }
-        .restart-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generative AI Testing Quiz</title>
+<style>
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background-color:#f4f7f6;color:#333;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px;}
+.quiz-container{background-color:#fff;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.1);width:100%;max-width:800px;padding:40px;}
+h1{text-align:center;color:#2c3e50;margin-top:0;}
+.question-text{font-size:1.2rem;font-weight:600;margin-bottom:20px;line-height:1.5;}
+.options-container{display:flex;flex-direction:column;gap:10px;}
+.option-btn{background-color:#f8f9fa;border:2px solid #e9ecef;border-radius:8px;padding:15px;font-size:1rem;cursor:pointer;text-align:left;transition:all 0.3s ease;}
+.option-btn:hover{background-color:#e2e6ea;border-color:#dae0e5;}
+.option-btn.correct{background-color:#d4edda;border-color:#c3e6cb;color:#155724;}
+.option-btn.wrong{background-color:#f8d7da;border-color:#f5c6cb;color:#721c24;}
+.option-btn:disabled{cursor:not-allowed;}
+.explanation{margin-top:20px;padding:15px;background-color:#e8f4f8;border-left:4px solid #17a2b8;border-radius:4px;display:none;line-height:1.5;}
+.syllabus-mapping{display:block;margin-top:12px;padding-top:12px;border-top:1px dashed #a1c4cc;font-size:0.9rem;color:#495057;}
+.controls{display:flex;justify-content:space-between;margin-top:30px;align-items:center;}
+.next-btn{background-color:#007bff;color:white;border:none;padding:12px 25px;border-radius:5px;font-size:1rem;cursor:pointer;display:none;}
+.next-btn:hover{background-color:#0056b3;}
+.progress{color:#6c757d;font-weight:bold;}
+.results-container{text-align:center;display:none;}
+.score{font-size:2rem;font-weight:bold;color:#28a745;margin:20px 0;}
+.restart-btn{background-color:#28a745;color:white;border:none;padding:12px 25px;border-radius:5px;font-size:1rem;cursor:pointer;}
+</style>
 </head>
 <body>
-
 <div class="quiz-container" id="quiz">
     <h1>Generative AI Testing Quiz</h1>
-    
     <div id="question-container">
-        <div class="progress" id="progress">Question 1 of X</div>
+        <div class="progress" id="progress">Loading...</div>
         <div class="question-text" id="question">Loading question...</div>
         <div class="options-container" id="options"></div>
         <div class="explanation" id="explanation"></div>
-        
-        <div class="controls">
-            <div></div>
-            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
-        </div>
+        <div class="controls"><div></div><button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button></div>
     </div>
-
     <div class="results-container" id="results">
         <h2>Quiz Completed!</h2>
-        <div class="score" id="score">You scored 0 out of 0</div>
+        <div class="score" id="score"></div>
         <button class="restart-btn" onclick="restartQuiz()">Restart Quiz</button>
     </div>
 </div>
 
 <script>
-    // Notice the new "syllabusMapping" property in each question object
-    const quizData = [
-        {
-            question: "A test team is evaluating AI tools. One tool automatically learns features from large visual datasets without manual feature selection, while another uses rule-based logic and symbols to mimic human decisions. Which two AI types are being described respectively?",
-            options: ["Deep Learning and Symbolic AI", "Classical Machine Learning and Symbolic AI", "Generative AI and Deep Learning", "Classical Machine Learning and Generative AI"],
-            answer: 0,
-            explanation: "Deep learning uses neural networks to automatically learn features from data without manual feature selection. Symbolic AI represents knowledge using symbols and logical rules to mimic human decision-making.",
-            syllabusMapping: "GenAI-1.1.1 (K1) Recall different types of AI: symbolic AI, classical machine learning, deep learning, and generative AI"
-        },
-        {
-            question: "During the analysis of a massive 100-page server log, an LLM starts missing critical failure details that were explicitly provided at the very beginning of the log file. What is the MOST likely technical limitation causing this issue?",
-            options: ["The temperature setting was too low, restricting the model's memory", "The tokenization process failed to convert numeric log data into text", "The tokens at the beginning fell outside the model's context window boundary", "The model experienced a data poisoning attack during the log analysis"],
-            answer: 2,
-            explanation: "When text exceeds the context window size, the model cannot simultaneously consider all parts of the document and must effectively 'forget' or discard tokens that fall outside its boundary.",
-            syllabusMapping: "GenAI-1.1.2 (K2) Explain the basics of generative AI and large language models"
-        },
-        {
-            question: "How do embeddings enable an LLM to understand the relationships between words in a software testing context?",
-            options: ["By breaking words down into single characters for faster syntax processing", "By capturing semantic, syntactic, and contextual relationships as vectors in a high-dimensional space", "By applying predefined symbolic rules to English testing grammar", "By predicting the next token using a low-temperature seed value"],
-            answer: 1,
-            explanation: "Embeddings are numerical representations of tokens that encode their semantic, syntactic, and contextual relationships into a high-dimensional vector space, positioning similar concepts closely together.",
-            syllabusMapping: "GenAI-1.1.2 (K2) Explain the basics of generative AI and large language models"
-        },
-        {
-            question: "A tester needs an LLM to perform logical inference, multi-step problem-solving, and synthesize data from complex defect reports to determine testing priorities. Which specific type of LLM is MOST appropriate for this task?",
-            options: ["Reasoning LLM", "Instruction-tuned LLM", "Foundation LLM", "Vision-language model"],
-            answer: 0,
-            explanation: "Reasoning LLMs extend instruction-tuned models by emphasizing structured cognitive abilities such as logical inference, multi-step problem-solving, and synthesizing complex information.",
-            syllabusMapping: "GenAI-1.1.3 (K2) Distinguish between foundation, instruction-tuned and reasoning LLMs"
-        },
-        {
-            question: "A test automation engineer wants to identify discrepancies between the expected results defined in a text-based user story and the actual visual elements present on a UI screenshot. What type of model is BEST suited for this?",
-            options: ["Vision-language model", "Classical machine learning model", "Symbolic AI model", "Foundation LLM without multimodal capabilities"],
-            answer: 0,
-            explanation: "Vision-language models, a subset of multimodal LLMs, specifically integrate visual and textual information to perform tasks such as analyzing the consistency between textual and visual input.",
-            syllabusMapping: "GenAI-1.1.4 (K2) Summarize the basic principles of multimodal LLMs and vision-language models"
-        }
-        // Add remaining questions here following the exact same pattern: question, options, answer, explanation, syllabusMapping
-    ];
+const quizData = [
+{ question: "A test team is evaluating AI tools. One tool automatically learns features from large visual datasets without manual feature selection, while another uses rule-based logic and symbols to mimic human decisions. Which two AI types are being described respectively?", options: ["Deep Learning and Symbolic AI", "Classical Machine Learning and Symbolic AI", "Generative AI and Deep Learning", "Classical Machine Learning and Generative AI"], answer: 0, explanation: "Deep learning uses neural networks to automatically learn features from data without manual feature selection. Symbolic AI represents knowledge using symbols and logical rules to mimic human decision-making.", syllabusMapping: "GenAI-1.1.1 (K1) Recall different types of AI: symbolic AI, classical machine learning, deep learning, and generative AI" },
+{ question: "During the analysis of a massive 100-page server log, an LLM starts missing critical failure details that were explicitly provided at the very beginning of the log file. What is the MOST likely technical limitation causing this issue?", options: ["The temperature setting was too low, restricting the model's memory", "The tokenization process failed to convert numeric log data into text", "The tokens at the beginning fell outside the model's context window boundary", "The model experienced a data poisoning attack during the log analysis"], answer: 2, explanation: "When text exceeds the context window size, the model cannot simultaneously consider all parts of the document and must effectively 'forget' or discard tokens that fall outside its boundary.", syllabusMapping: "GenAI-1.1.2 (K2) Explain the basics of generative AI and large language models" },
+{ question: "How do embeddings enable an LLM to understand the relationships between words in a software testing context?", options: ["By breaking words down into single characters for faster syntax processing", "By capturing semantic, syntactic, and contextual relationships as vectors in a high-dimensional space", "By applying predefined symbolic rules to English testing grammar", "By predicting the next token using a low-temperature seed value"], answer: 1, explanation: "Embeddings are numerical representations of tokens that encode their semantic, syntactic, and contextual relationships into a high-dimensional vector space, positioning similar concepts closely together.", syllabusMapping: "GenAI-1.1.2 (K2) Explain the basics of generative AI and large language models" },
+{ question: "A tester needs an LLM to perform logical inference, multi-step problem-solving, and synthesize data from complex defect reports to determine testing priorities. Which specific type of LLM is MOST appropriate for this task?", options: ["Reasoning LLM", "Instruction-tuned LLM", "Foundation LLM", "Vision-language model"], answer: 0, explanation: "Reasoning LLMs extend instruction-tuned models by emphasizing structured cognitive abilities such as logical inference, multi-step problem-solving, and synthesizing complex information.", syllabusMapping: "GenAI-1.1.3 (K2) Distinguish between foundation, instruction-tuned and reasoning LLMs" },
+{ question: "A test automation engineer wants to identify discrepancies between the expected results defined in a text-based user story and the actual visual elements present on a UI screenshot. What type of model is BEST suited for this?", options: ["Vision-language model", "Classical machine learning model", "Symbolic AI model", "Foundation LLM without multimodal capabilities"], answer: 0, explanation: "Vision-language models, a subset of multimodal LLMs, specifically integrate visual and textual information to perform tasks such as analyzing the consistency between textual and visual input.", syllabusMapping: "GenAI-1.1.4 (K2) Summarize the basic principles of multimodal LLMs and vision-language models" },
+{ question: "Which of the following is NOT a recognized capability of an LLM in software testing?", options: ["Executing manual exploratory testing based on human intuition", "Generating expected results to solve the test oracle problem", "Synthesizing representative test data with boundary values", "Identifying ambiguities and inconsistencies in requirements"], answer: 0, explanation: "LLMs cannot perform manual exploratory testing because it is an intuitive and adaptive process that requires human creativity, experience, and real-time decision-making.", syllabusMapping: "GenAI-1.2.1 (K2) Give examples of key LLM capabilities for test tasks" },
+{ question: "In a structured prompt, a tester includes the following sentence: 'The application under test is a high-frequency financial trading platform that must comply with strict regulatory latency requirements.' Which component of the six-part prompt structure does this represent?", options: ["Context", "Role", "Constraints", "Instruction"], answer: 0, explanation: "Context provides the background information that the GenAI model needs, including details about the test object, specific functionality, and relevant environmental or business information.", syllabusMapping: "GenAI-2.1.1 (K2) Give examples of the structure of prompts used in generative AI for software testing" },
+{ question: "A tester writes a prompt ending with: 'Do not use any technical testing jargon and limit your entire response to a maximum of 500 words.' Into which prompt component do these statements fall?", options: ["Input Data", "Role", "Constraints", "Output Format"], answer: 2, explanation: "Constraints outline restrictions or special considerations that the LLM should adhere to, such as word limits or rules against using specific terminology.", syllabusMapping: "GenAI-2.1.1 (K2) Give examples of the structure of prompts used in generative AI for software testing" },
+{ question: "A tester needs to generate test conditions from raw requirements, prioritize those conditions by risk, and finally perform a coverage analysis. Why is prompt chaining the BEST technique for this workflow?", options: ["It provides multiple examples of coverage analysis in a single prompt", "It relies on the LLM to refine its own prompts iteratively without human input", "It breaks the complex task into intermediate steps, allowing human verification before proceeding to the next phase", "It requires no initial context or examples to function perfectly"], answer: 2, explanation: "Prompt chaining involves breaking a task into a series of intermediate steps, where the result of each step is manually or automatically checked and refined before proceeding to the next step.", syllabusMapping: "GenAI-2.1.2 (K2) Differentiate core prompting techniques for software testing" },
+{ question: "A test automation engineer wants an LLM to generate keyword-driven test scripts. To ensure the LLM strictly follows the specific proprietary keyword vocabulary of their organization, what should the engineer include in the prompt?", options: ["A zero-shot instruction asking the LLM to invent a new keyword framework", "Several predefined examples of existing keyword-driven scripts mapped to test cases", "A meta-prompt asking the LLM to define what keywords it prefers", "A high temperature setting to encourage creative keyword usage"], answer: 1, explanation: "Providing several predefined examples constitutes 'few-shot prompting,' which helps guide the model by demonstrating the desired outcome, ensuring the results consistently follow the organization's specific pattern.", syllabusMapping: "GenAI-2.1.2 (K2) Differentiate core prompting techniques for software testing" },
+{ question: "A tester is struggling to write an effective prompt for analyzing an ambiguous non-functional requirement. The tester submits the following to the LLM: 'Help me write a prompt that will allow you to successfully generate test oracles for performance testing.' What technique is being utilized?", options: ["Few-shot prompting", "Prompt chaining", "Output analysis", "Meta prompting"], answer: 3, explanation: "Meta prompting leverages the AI's ability to generate or refine its own prompts iteratively, which is highly beneficial when the tester is unsure how to craft an effective prompt.", syllabusMapping: "GenAI-2.1.2 (K2) Differentiate core prompting techniques for software testing" },
+{ question: "An organization wants to ensure its internal AI chatbot always responds in a formal tone, acts as a Senior Test Manager, and never exposes internal IP, regardless of what the user asks. Where should these rules be established?", options: ["In the System prompt", "In the User prompt", "In the Vector database", "In the Post-processing component"], answer: 0, explanation: "The system prompt acts as a predefined command set defined by the developer or tester that dictates the LLM's overall behavior, personality, and constraints, remaining constant throughout the session.", syllabusMapping: "GenAI-2.1.3 (K2) Distinguish between system prompts and user prompts" },
+{ question: "How can Generative AI BEST support the test analysis phase when reviewing new user stories?", options: ["By automatically executing automated scripts against the stories in the CI/CD pipeline", "By interpreting the natural language requirements to generate measurable test conditions and flagging ambiguities", "By compiling the application source code to find syntax errors early", "By fine-tuning a foundation model directly on the user stories without oversight"], answer: 1, explanation: "During test analysis, LLMs can interpret the meaning of user stories, break them down into testable statements (test conditions), and flag potential anomalies or missing information.", syllabusMapping: "GenAI-2.2.1 (K3) Apply generative AI to test analysis tasks" },
+{ question: "When generating synthetic test data for an application handling personal health records, what is the PRIMARY advantage of using an LLM?", options: ["It automatically encrypts the database during storage", "It uses symbolic AI rules to randomly generate numerical data arrays", "It completely replaces the need for standard data masking tools", "It can simulate realistic data scenarios and complex edge cases without exposing real sensitive patient information"], answer: 3, explanation: "AI-generated test data can be tailored to application requirements, simulating highly realistic scenarios and complex combinations without risking the exposure of actual sensitive data.", syllabusMapping: "GenAI-1.2.1 (K2) Give examples of key LLM capabilities for test tasks" },
+{ question: "How can Generative AI be used to strategically optimize automated regression testing in a CI/CD pipeline?", options: ["By performing impact analysis on recent code changes to identify high-risk areas, allowing for targeted regression execution", "By physically deploying the compiled code to the production environment", "By automatically rewriting the entire test automation framework from scratch for every build", "By eliminating the need to ever execute functional regression tests again"], answer: 0, explanation: "GenAI can dynamically adapt to codebase changes and perform impact analysis to identify which areas of the software are most likely affected, focusing regression efforts where they are most needed.", syllabusMapping: "GenAI-2.2.3 (K3) Apply generative AI to automated regression testing" },
+{ question: "A tester asks an LLM to generate test cases based on a decision table. Upon review, the tester finds that the LLM completely missed several valid equivalence partitions. Which evaluation metric MOST directly reflects this specific failure?", options: ["Precision", "Diversity", "Time Efficiency", "Recall"], answer: 3, explanation: "Recall measures the ability of a model to identify all relevant instances within a dataset. Missing valid equivalence partitions means the generated output is incomplete, resulting in a low recall score.", syllabusMapping: "GenAI-2.3.1 (K2) Understand the metrics for evaluating the results of Generative AI on test tasks" },
+{ question: "Which metric should be prioritized to evaluate whether an AI-generated API test script can actually run in the test environment without syntax or formatting errors?", options: ["Relevance and Contextual Fit", "Accuracy", "Execution Success Rate", "Diversity"], answer: 2, explanation: "Execution Success Rate measures the proportion of generated test cases or test scripts that can be executed successfully without syntax errors or output format issues.", syllabusMapping: "GenAI-2.3.1 (K2) Understand the metrics for evaluating the results of Generative AI on test tasks" },
+{ question: "A tester notices the LLM keeps generating test cases that contradict the acceptance criteria. To fix this, the tester examines the specific errors, categorizes the inconsistencies, and uses this knowledge to rewrite the prompt's instructions. What prompt refinement technique is being used?", options: ["Output analysis", "A/B testing of prompts", "Adjusting prompt length", "Meta prompting"], answer: 0, explanation: "Output analysis involves examining AI-generated output for inaccuracies or inconsistencies. Understanding these errors provides concrete insights for refining prompts to avoid similar defects in the future.", syllabusMapping: "GenAI-2.3.2 (K2) Give examples of techniques for evaluating and iteratively refining prompts" },
+{ question: "A test team creates two distinctly different prompt structures to see which one yields better Gherkin scenarios for their project. They run both and compare the accuracy and recall scores. What is this optimization approach called?", options: ["Zero-shot testing", "Few-shot evaluation", "A/B testing of prompts", "Iterative constraint modification"], answer: 2, explanation: "A/B testing of prompts involves creating multiple versions of prompts and evaluating which version produces better results based on predefined metrics to determine the most effective structure.", syllabusMapping: "GenAI-2.3.2 (K2) Give examples of techniques for evaluating and iteratively refining prompts" },
+{ question: "During test planning, an LLM is given historical defect data and asked to estimate future test effort. It fails to correctly correlate the complex cause-and-effect relationship between codebase complexity and defect density, resulting in a mathematically flawed estimate. What type of error is this?", options: ["Hallucination", "Reasoning error", "Bias", "Data poisoning"], answer: 1, explanation: "Reasoning errors occur when LLMs misinterpret logical structures, cause-and-effect relationships, or step-by-step problem-solving processes, leading to incorrect conclusions despite having the right data.", syllabusMapping: "GenAI-3.1.1 (K1) Recall the definitions of hallucinations, reasoning errors and biases in Generative AI systems" },
+{ question: "In a multi-agent testing architecture, what does the term 'orchestration' specifically refer to?", options: ["The process of fine-tuning a single model on multiple datasets simultaneously", "The act of dynamically adjusting the temperature parameter during inference", "The removal of human oversight in semi-autonomous systems", "A collaborative system where several specialized agents communicate and coordinate to solve complex problems efficiently"], answer: 3, explanation: "Orchestration refers to the coordinated effort and communication among multiple AI agents, each with specialized roles, to solve complex problems more efficiently than a single agent could.", syllabusMapping: "GenAI-4.1.3 (K2) Explain the role and application of LLM-powered agents in automating test processes" },
+{ question: "A test organization wants to adapt an open-source Small Language Model (SLM) to generate test cases using their highly specific, proprietary domain vocabulary. What is the MOST appropriate technical approach?", options: ["Using zero-shot prompting on a generic Foundation LLM", "Increasing the context window size of the SLM to maximum", "Relying on an image-to-text Vision-language model", "Fine-tuning the SLM on a targeted dataset containing their domain-specific user stories and test cases"], answer: 3, explanation: "Fine-tuning adapts a pre-trained language model by training it further on a targeted dataset, equipping it to use highly specific domain vocabulary and patterns inherent to the organization.", syllabusMapping: "GenAI-4.2.1 (K2) Explain the fine-tuning of language models for specific test tasks" },
+{ question: "What is a major risk when fine-tuning an LLM on a highly specific and narrow testing dataset?", options: ["Data exfiltration", "Hallucination", "Under-parameterization", "Overfitting"], answer: 3, explanation: "Overfitting occurs when a model becomes too specialized to its training data, which negatively impacts its ability to generalize and perform accurately on new, unseen data.", syllabusMapping: "GenAI-4.2.1 (K2) Explain the fine-tuning of language models for specific test tasks" },
+{ question: "An organization develops an in-house GenAI testing tool. They implement processes to monitor model performance, manage cloud costs, ensure data privacy, and track dataset versions in production. What specific practice are they applying?", options: ["Shadow AI", "Zero-shot prompting", "Symbolic AI infrastructure", "LLMOps (Large Language Model Operations)"], answer: 3, explanation: "LLMOps refers to the set of practices, tools, and processes designed to streamline the development, deployment, maintenance, and cost management of LLMs in production environments across their entire lifecycle.", syllabusMapping: "GenAI-4.2.2 (K2) Explain LLMOps and its role in deploying and managing LLMs for test tasks" },
+{ question: "A tester decides to use a free, public web-based LLM to generate test cases for a highly confidential, unreleased banking feature without informing management or IT. What specific risk is being demonstrated?", options: ["Prompt chaining leading to systemic hallucinations", "Data poisoning of the internal test database", "RAG framework failure", "Shadow AI leading to potential data privacy and intellectual property breaches"], answer: 3, explanation: "Shadow AI refers to the use of unapproved GenAI tools within an organization. Using public tools for confidential data without formal approval creates massive security, privacy, and intellectual property risks.", syllabusMapping: "GenAI-5.1.1 (K1) Recall the risks of shadow AI" },
+{ question: "When defining a Generative AI strategy for software testing, why is the quality of input data considered of paramount importance?", options: ["Because higher data quality permanently reduces the licensing cost of commercial LLMs", "Because it guarantees the LLM will run with zero energy consumption", "Because poor data quality will physically damage the vector database hardware", "Because the effectiveness and trustworthiness of LLM-powered testing depends entirely on accurate and relevant input data"], answer: 3, explanation: "Data quality plays a critical role because LLM outputs are directly shaped by their inputs. Maintaining high-quality input data is key to achieving results that can be trusted to be correct and actionable.", syllabusMapping: "GenAI-5.1.2 (K2) Explain the key aspects to consider when defining a Generative AI strategy for software testing" },
+{ question: "An organization is evaluating two LLMs for test automation support. One requires a large upfront licensing fee and heavy cloud compute resources, while the other is an open-source SLM requiring significantly less compute power. Which key selection criterion is the organization primarily evaluating?", options: ["Model fine-tuning potential", "Community and support", "Context window token limits", "Recurring costs and operational expenses"], answer: 3, explanation: "Evaluating licensing fees and the computational resources required to run the model falls directly under the critical selection criterion of assessing recurring costs and operational expenses.", syllabusMapping: "GenAI-5.1.3 (K2) Summarize key criteria for selecting LLMs/SLMs for software test tasks in a given context" },
+{ question: "In which phase of Generative AI adoption does a test organization primarily focus on identifying and prioritizing practical use cases, evaluating infrastructure, and ensuring alignment with organizational needs?", options: ["Discovery", "Utilization and iteration", "Exploitation and scaling", "Initiation and usage definition"], answer: 3, explanation: "The 'Initiation and usage definition' phase follows basic discovery and focuses heavily on identifying, prioritizing, and defining practical use cases for GenAI in the software testing lifecycle.", syllabusMapping: "GenAI-5.1.4 (K1) Recall key phases in the adoption of Generative AI in a test organization" },
+{ question: "As Generative AI is heavily integrated into the test process, how does the role of a Test Manager fundamentally evolve?", options: ["They focus exclusively on writing system prompts for the engineering team", "They no longer need to manage testing schedules or project tracking", "They shift entirely to writing Python code for foundation model training", "They must establish AI governance frameworks, manage AI-based risks, and oversee hybrid teams of humans and GenAI tools"], answer: 3, explanation: "Test managers shift their focus to balancing human and AI capabilities, developing AI-based test strategies, establishing governance frameworks, and strategically overseeing hybrid teams composed of human testers and GenAI tools.", syllabusMapping: "GenAI-5.2.3 (K1) Recognize how test processes and responsibilities shift within a test organization when adopting Generative AI for testing" },
+{ question: "How are the roles and responsibilities of testers impacted by the adoption of Generative AI for software testing?", options: ["Testers shift their focus from manually designing test cases to guiding and verifying AI-generated testware", "Test managers shift their focus to understanding the inner working of Generative AI technologies", "Testers shift their focus from manually designing test cases to overseeing AI-based test processes", "Test managers shift their focus from relying on people to relying solely on Generative AI"], answer: 0, explanation: "Testers evolve from pure test execution specialists to AI-assisted testing specialists. Their daily tasks expand to include guiding the AI (prompt engineering) and reviewing/verifying AI-generated testware instead of just manually designing cases from scratch.", syllabusMapping: "GenAI-5.2.3 (K1) Recognize how test processes and responsibilities shift within a test organization when adopting Generative AI for testing" },
+{ question: "Match each type of AI technology (1-4) with its CORRECT description (A-D): 1. Symbolic AI 2. Classical machine learning 3. Deep learning 4. Generative AI. A. Uses neural networks to automatically learn features. B. Uses rule-based systems. C. Creates new data. D. Requires feature selection.", options: ["1D, 2B, 3A, 4C", "1D, 2C, 3B, 4A", "1C, 2B, 3D, 4A", "1B, 2D, 3A, 4C"], answer: 3, explanation: "Symbolic AI uses a rule-based system. Classical ML uses a data-driven approach requiring feature selection. Deep learning uses neural networks. Generative AI creates new data.", syllabusMapping: "GenAI-1.1.1 (K1)" },
+{ question: "Consider the realm of Large Language Models (LLMs). Which of the following options BEST explains why context window limitations affect LLM's text processing capabilities?", options: ["Because context windows restrict temporal processing sequences", "Because context windows prevent cross-referencing capabilities", "Because context windows force LLMs to discard earlier information, which may contain relevant details needed for understanding later content", "Because context windows constrain parsing granularity levels"], answer: 2, explanation: "When text exceeds the context window size, the model cannot simultaneously consider all parts of the document. As the model processes new tokens, it must effectively 'forget' or discard tokens.", syllabusMapping: "GenAI-1.1.2 (K2)" },
+{ question: "Which of the following statements BEST describes tokenization in processing text for LLMs?", options: ["Tokenization converts tokens into high-dimensional vectors", "Tokenization creates the building blocks used to understand and generate text", "Tokenization generates contextually appropriate responses", "Tokenization predicts the next token in a sequence"], answer: 1, explanation: "Tokenization involves splitting text into smaller units (tokens) that represent the building blocks of natural language generation tasks.", syllabusMapping: "GenAI-1.1.2 (K2)" },
+{ question: "In the context of software testing, which of the following statements about foundation, instruction-tuned, and reasoning LLMs are CORRECT? i. Foundation LLMs excel at generating test cases. ii. Reasoning LLMs excel at creating templates. iii. Instruction-tuned excel at prioritizing execution. iv. Reasoning LLMs excel at synthesizing data from defect reports. v. Instruction-tuned LLMs excel at generating test cases that adhere to Gherkin.", options: ["i, ii, and iii", "ii, iii, and iv", "i, ii, and v", "iv, and v"], answer: 3, explanation: "Reasoning LLMs are designed for synthesizing multiple data sources and problem-solving. Instruction-tuned LLMs are specifically trained to follow instructions, like adhering to Gherkin syntax rules.", syllabusMapping: "GenAI-1.1.3 (K2)" },
+{ question: "Which of the following statements BEST describes the relation between multimodal LLMs and vision-language models?", options: ["Multimodal LLMs are a subset of vision-language models", "Vision-language models are a subset of multimodal LLMs focusing on visual and textual data", "Vision-language models are unrelated to multimodal LLMs", "Multimodal LLMs and vision-language models are interchangeable terms"], answer: 1, explanation: "Vision-language models specifically integrate visual and textual data, making them a specific subset of multimodal LLMs.", syllabusMapping: "GenAI-1.1.4 (K2)" },
+{ question: "Which TWO of the following options represent key capabilities of LLMs in test tasks?", options: ["1) Identifying ambiguities in requirements and 5) Creating diverse test data combinations", "1) Identifying ambiguities in requirements and 2) Generating complete code", "3) Automating test scripts and 4) Performing exploratory testing", "2) Generating complete code and 5) Creating diverse test data combinations"], answer: 0, explanation: "LLMs can support testing by identifying ambiguities and inconsistencies in requirements, and creating diverse test data with various combinations and boundary values.", syllabusMapping: "GenAI-1.2.1 (K2)" },
+{ question: "Which of the following statements BEST explains the difference between AI chatbots and LLM-powered testing applications in the context of software testing?", options: ["AI chatbots are more suited for specific test tasks, while applications focus on ad hoc interactions.", "Both are designed to perform identical tasks without differences.", "LLM-powered applications rely on conversational prompts, while chatbots require integration.", "AI chatbots offer conversational interfaces for ad hoc test tasks, while LLM-powered testing applications provide customized solutions for specific test tasks."], answer: 3, explanation: "AI chatbots provide conversational interfaces for ad hoc tasks, while LLM-powered testing applications deliver customized solutions tailored for specific test tasks.", syllabusMapping: "GenAI-1.2.2 (K2)" },
+{ question: "A tester is examining a structured prompt used to obtain LLM assistance for performance test analysis. One component reads: 'Test reports from performance testing tools, system monitoring logs...' In which component of the six-part prompt structure would this MOST LIKELY appear?", options: ["Context", "Input data", "Constraints", "Output format"], answer: 1, explanation: "The description lists specific data sources that will be processed by the LLM to perform the analysis task, which aligns with the Input Data component.", syllabusMapping: "GenAI-2.1.1 (K2)" },
+{ question: "A tester wants an LLM to analyze a requirements specification. In the structured prompt, one line reads: 'The potential defects must be provided in a markdown table...' In which component would this line MOST LIKELY appear?", options: ["Instructions", "Constraints", "Output format", "Context"], answer: 2, explanation: "The given line matches the syllabus definition of Output format specifications, which guide how the LLM should structure its output results.", syllabusMapping: "GenAI-2.1.1 (K2)" },
+{ question: "Which of the following BEST differentiates prompt chaining, few-shot prompting, and meta prompting techniques?", options: ["Prompt chaining focuses on providing examples, few-shot breaks tasks into subtasks.", "Few-shot prompting provides guidance with examples, prompt chaining breaks tasks into multiple prompts, and meta prompting allows the model to iteratively refine its own prompts.", "Meta prompting emphasizes breaking down tasks into steps.", "Prompt chaining provides guidance without examples."], answer: 1, explanation: "Few-shot prompting provides guidance with examples, prompt chaining decomposes tasks into intermediate steps, and meta prompting uses AI to refine its own prompts iteratively.", syllabusMapping: "GenAI-2.1.2 (K2)" },
+{ question: "What is the primary function of a system prompt in interactions with LLMs?", options: ["To provide a framework for the LLM behavior for the entire conversation", "To provide specific questions or instructions from the user", "To adjust dynamically with each user interaction", "To include visible input from the user and set rules"], answer: 0, explanation: "The system prompt acts as a predefined command set that defines the LLM's overall behavior, personality, and operational parameters. It stays constant throughout the interaction session.", syllabusMapping: "GenAI-2.1.3 (K2)" },
+{ question: "You are tasked with applying the following test approach to stable requirements: generate test conditions, prioritize them, and identify coverage gaps. Which sequence BEST follows prompt chaining?", options: ["Submit requirements to produce test conditions -> Provide conditions to prioritize -> Provide prioritized conditions to analyze coverage gaps.", "Submit requirements to produce prioritized test conditions that address all aspects at once.", "Submit requirements to produce test conditions -> Analyze them for coverage -> Detect inconsistencies.", "Submit requirements to detect ambiguities -> Produce prioritized conditions in one step."], answer: 0, explanation: "This sequence successfully follows prompt chaining by breaking the complex task into manageable sequential steps.", syllabusMapping: "GenAI-2.2.1 (K3)" },
+{ question: "Consider applying the few-shot structured prompting technique to generate Gherkin-style test cases. Which element MUST be included in the prompt to make it a true 'few-shot' prompt?", options: ["A clear description of the Output Format", "A constraint requiring Given-When-Then syntax", "Predefined examples of user stories, criteria, and corresponding Gherkin test cases", "A role defining the LLM as a test analyst"], answer: 2, explanation: "The few-shot prompting technique specifically requires providing the LLM with predefined examples (more than one) within the prompt to explicitly demonstrate and guide its generation patterns.", syllabusMapping: "GenAI-2.2.2 (K3)" },
+{ question: "You are applying structured prompting to analyze regression test results. The draft prompt asks the LLM to 'Identify discrepancies in the test results.' Which improvement BEST aligns with structured prompt engineering?", options: ["Add a step to cluster similar issues and cross-check findings against the known anomalies list", "Specify that the role is a regression test analyst", "Expand the instruction to include separating expected results and actual results, clustering issues, and highlighting discrepancies", "Include references to regression testing principles in the constraints"], answer: 2, explanation: "Expanding the instructions provides the LLM with the structured analysis steps required for a comprehensive regression report analysis.", syllabusMapping: "GenAI-2.2.4 (K3)" },
+{ question: "You are using an LLM to assist in preparing actionable test metrics from raw data to be displayed on a dashboard. Which improvement BEST enhances the LLM's ability to produce actionable metrics?", options: ["Specify that the role is a test manager", "Add an instruction to include potential risks", "Expand the output format to include a plain-language summary that interprets the metrics and outlines next steps for stakeholders", "Emphasize constraints using clear language"], answer: 2, explanation: "Expanding the output format with a plain-language summary that interprets the metrics and explicitly outlines the next steps directly supports stakeholder understanding.", syllabusMapping: "GenAI-2.2.4 (K3)" },
+{ question: "Your goal is to create test cases for an AI-based system with a test oracle problem. You have well-defined transformation rules and a few existing test cases with known expected results. Which prompting technique is BEST suited?", options: ["Few-shot prompting", "Prompt chaining", "Meta prompting", "Zero-shot prompting"], answer: 0, explanation: "Few-shot prompting is ideal because it allows you to provide the existing test cases with their inputs and expected results as examples to guide the LLM.", syllabusMapping: "GenAI-2.2.5 (K3)" },
+{ question: "To effectively evaluate a Generative AI model's performance in generating test cases and API scripts, which combination of metrics and actions BEST ensures comprehensive assessment?", options: ["Evaluate the diversity of test cases to ensure varied input scenarios and use test execution success rate to validate the functionality of generated API test scripts", "Apply accuracy and completeness metrics and rely on time efficiency", "Focus on precision to ensure generated test data meets compliance", "Prioritize relevance and contextual fit"], answer: 0, explanation: "Measuring diversity ensures comprehensive coverage, and the test execution success rate directly evaluates the functional reliability of the generated API test scripts.", syllabusMapping: "GenAI-2.3.1 (K2)" },
+{ question: "Which of the following techniques for evaluating and iteratively refining prompts is BEST suited for determining why an LLM consistently generates test cases with wrong expected results?", options: ["Output analysis", "A/B testing of prompts", "Adjusting prompt length and specificity", "Integrating user feedback"], answer: 0, explanation: "Output analysis involves examining the LLM's outputs for specific inaccuracies or inconsistencies, revealing exactly why the prompt misled the LLM.", syllabusMapping: "GenAI-2.3.2 (K2)" },
+{ question: "What is a hallucination in the context of LLM outputs?", options: ["A logical error where the LLM fails to follow a multi-step reasoning process", "A bias in the LLM output caused by the training data", "A generation of irrelevant or factually incorrect output by the LLM for a given task", "A limitation of the LLM to understand non-English perspectives"], answer: 2, explanation: "Hallucinations occur when an LLM generates output that appears plausible but is factually incorrect or irrelevant to a given task.", syllabusMapping: "GenAI-3.1.1 (K1)" },
+{ question: "You are creating test cases for an e-commerce app with features: cart management, discount codes, and order confirmation emails. Which AI-generated test case MOST LIKELY represents a hallucination?", options: ["Verify that a user can add multiple items to their cart", "Verify that a user cannot apply an expired discount code", "Verify that a user receives a confirmation email", "Verify that a user can create a wishlist to save favorite items for later"], answer: 3, explanation: "Wishlist management was not mentioned anywhere in the explicit project briefing, making this an AI hallucination inventing fictional features.", syllabusMapping: "GenAI-3.1.2 (K3)" },
+{ question: "Which of the following refers to a benefit MOST directly associated with using clear and structured input data formats when working with LLMs?", options: ["Helps reduce the effort to fine-tune the LLMs", "Helps LLMs generate less ambiguous outputs for test tasks", "Helps LLMs generate more context-relevant outputs", "Helps LLMs generate more creative outputs"], answer: 1, explanation: "When input data is presented in a clear and structured way, potential misunderstandings are minimized, directly reducing ambiguity in outputs.", syllabusMapping: "GenAI-3.1.3 (K2)" },
+{ question: "Which strategy can help reduce variability in LLM outputs by narrowing the probability distribution during inference?", options: ["Increasing the learning rate", "Lowering the temperature setting", "Increasing the random seed", "Lowering the random seed"], answer: 1, explanation: "Lowering the temperature reduces randomness, leading to more consistent, deterministic outputs.", syllabusMapping: "GenAI-3.1.4 (K1)" },
+{ question: "Which of the following statements about data privacy concerns related to using Generative AI for software testing is INCORRECT?", options: ["Generative AI can unintentionally expose sensitive data through its outputs", "Generative AI tools may store and process sensitive data without explicit consent", "Using Generative AI tools without adhering to GDPR can lead to legal disputes", "An LLM is likely to expose real sensitive data if it hallucinates while generating synthetic test data, regardless of the data it was trained on"], answer: 3, explanation: "An LLM does not expose real sensitive data if it hallucinates when generating synthetic test data, as long as it was not actually trained on real sensitive data.", syllabusMapping: "GenAI-3.2.1 (K2)" },
+{ question: "An attacker injects falsified test results into the training dataset of an LLM intended to recommend optimal test coverage strategies. What type of attack vector does this refer to?", options: ["Malicious code generation", "Data exfiltration", "Request manipulation", "Data poisoning"], answer: 3, explanation: "Data poisoning involves manipulating the training or fine-tuning data to compromise the model's accuracy, future behavior, or security.", syllabusMapping: "GenAI-3.2.2 (K2)" },
+{ question: "Which TWO of the following standards are MOST relevant to the use of Generative AI in software testing?", options: ["ISO/IEC 23053:2022 and ISO/IEC 42001:2023", "ISO/IEC 25010:2023 and ISO/IEC 23053:2022", "ISO/IEC/IEEE 29119-2:2021 and ISO/IEC/IEEE 29119-3:2021", "ISO/IEC 42001:2023 and ISO/IEC 25010:2023"], answer: 0, explanation: "ISO/IEC 23053:2022 provides a framework for data quality when using GenAI. ISO/IEC 42001:2023 specifies requirements for managing AI-based systems.", syllabusMapping: "GenAI-3.4.1 (K1)" },
+{ question: "Which of the following strategies BEST addresses data privacy risks in the context of Generative AI-powered software testing?", options: ["Using multiple LLMs to evaluate and compare test results", "Replacing sensitive test data with an anonymized version of the same", "Allowing unrestricted access to sensitive test data", "Disabling encryption of sensitive test data"], answer: 1, explanation: "Data anonymization involves masking or replacing sensitive information with non-identifiable data, which is a highly effective strategy to mitigate privacy risks.", syllabusMapping: "GenAI-3.2.3 (K2)" },
+{ question: "Which of the following options about the impact of LLM usage on energy consumption and CO2 emission is CORRECT?", options: ["Image generation consumes more energy but produces fewer emissions", "GenAI-powered searches consume less energy than traditional web searches", "Image generation tasks consume substantially more energy than text generation tasks due to their higher computational complexity", "Text generation tasks consume very little energy and have no significant footprint"], answer: 2, explanation: "Image generation requires significantly more computational resources than text generation, making it much more energy intensive and directly correlating to higher CO2 emissions.", syllabusMapping: "GenAI-3.3.1 (K2)" },
+{ question: "Which component of an LLM-powered testing application is responsible for combining user input with structured and semantically similar data to prepare a prompt for the LLM?", options: ["Back-end", "Front-end", "Authentication component", "Post-processing component"], answer: 0, explanation: "The back-end architecture is responsible for retrieving data from databases, combining it with user input, and preparing the exact tailored prompt.", syllabusMapping: "GenAI-4.1.1 (K2)" },
+{ question: "You need to generate test cases aligned with the latest specifications stored in a vector database and historical test cases in a relational database. What is the MOST appropriate use of the RAG framework?", options: ["Submit a query specifying one function to be tested. The RAG framework will retrieve relevant data and automatically generate context-aware test cases.", "Submit a query specifying all functions to be tested at once for the RAG to process entirely.", "Use RAG to retrieve historical cases, manually review them, then refine the query.", "Rely solely on the LLM's internal training data and use RAG only as a passive reference."], answer: 0, explanation: "RAG is best used to automatically retrieve specific, targeted information from databases and feed it to the LLM to generate highly accurate outputs.", syllabusMapping: "GenAI-4.1.2 (K2)" },
+{ question: "What are the two primary steps in RAG processing?", options: ["Input / Retrieval", "Processing / Output", "Access / Processing", "Retrieval / Generation"], answer: 3, explanation: "Retrieval-Augmented Generation (RAG) fundamentally involves two primary runtime steps: Retrieval (fetching relevant data) and Generation (creating the response).", syllabusMapping: "GenAI-4.1.2 (K2)" },
+{ question: "Which of the following options BEST describes the enhancements that autonomous and semi-autonomous LLM-powered agents bring to automating test processes?", options: ["They enhance efficiency and quality through single-agent systems only", "They enhance quality by adding complex verification checks although at the expense of efficiency", "They can enhance both efficiency and quality by leveraging their ability to operate with varying levels of human interaction", "They enhance efficiency while eliminating the need for verification"], answer: 2, explanation: "Autonomous agents increase efficiency with minimal intervention, while semi-autonomous agents involve strategic human oversight to ensure quality.", syllabusMapping: "GenAI-4.1.3 (K2)" },
+{ question: "Which of the following statements about fine-tuning language models for specific test tasks is INCORRECT?", options: ["Fine-tuning involves training a pre-trained model on task-specific data", "Fine-tuning equips a language model by replacing its general knowledge with task-specific reasoning, ensuring the absence of overfitting", "Fine-tuning modifies a pre-trained model's parameters using a targeted dataset", "Fine-tuning requires high-quality, task-specific datasets to avoid biased results"], answer: 1, explanation: "This statement is incorrect because fine-tuning does not replace the model's general knowledge, and overfitting remains a major potential challenge.", syllabusMapping: "GenAI-4.2.1 (K2)" },
+{ question: "Which of the following BEST describes the primary focus of Large Language Model Operations (LLMOps) when deploying and managing LLMs for test tasks?", options: ["Preventing reliance on Generative AI in test processes", "Managing LLMs effectively across their lifecycle, including privacy, security, and cost considerations", "Limiting LLM usage to chatbot-based testing solutions", "Fully automating all test tasks without requiring human oversight"], answer: 1, explanation: "LLMOps refers to the set of practices and tools designed to streamline the deployment, maintenance, privacy, security, and cost management of LLMs.", syllabusMapping: "GenAI-4.2.2 (K2)" },
+{ question: "Which of the following statements about shadow AI is CORRECT?", options: ["Shadow AI enforces compliance with organizational data policies", "Shadow AI eliminates the need for clear licensing agreements", "Shadow AI reduces the risk of intellectual property disputes", "Shadow AI may lead to unauthorized accesses to sensitive information"], answer: 3, explanation: "Shadow AI refers to the use of unapproved GenAI tools within an organization, increasing the risk of data breaches and unauthorized access.", syllabusMapping: "GenAI-5.1.1 (K1)" },
+{ question: "What is a key aspect to consider when defining a Generative AI strategy for software testing?", options: ["Prepare training programs designed to ensure team members obtain AI certifications", "Select LLMs that can be integrated appropriately with existing test environments and test tools", "Ensure that as much input data as possible is available regardless of quality", "Collect standard supervised machine learning metrics"], answer: 1, explanation: "A key aspect of defining a robust GenAI testing strategy is selecting models that are compatible with your organization's existing test infrastructure and tools.", syllabusMapping: "GenAI-5.1.2 (K2)" },
+{ question: "Which of the following statements BEST describes one of the key criteria to select an appropriate LLM for specific test tasks within a test organization?", options: ["Evaluating the LLM's performance against publicly available benchmarks for code generation only", "Evaluating recurring costs such as those associated with the computational resources required to run the LLM", "Evaluating the LLM against community benchmarks to ensure full compatibility", "Evaluating non-recurring costs associated with a proof of concept exclusively"], answer: 1, explanation: "A key selection criterion involves evaluating recurring costs, such as the heavy computational resources and cloud fees required to run the LLM.", syllabusMapping: "GenAI-5.1.3 (K2)" },
+{ question: "What are the key phases in the adoption of Generative AI in a test organization?", options: ["Discovery, initiation and usage definition, utilization and iteration", "Awareness, usage prioritization, performance monitoring", "Planning, experimentation, evaluation and refinement", "Training, testing, implementation, and scaling"], answer: 0, explanation: "The syllabus specifically identifies these three key phases: Discovery, Initiation and usage definition, and Utilization and iteration.", syllabusMapping: "GenAI-5.1.4 (K1)" },
+{ question: "Which of the following options BEST refers to an example of knowledge and/or skills required for testers to work effectively with LLMs in test processes?", options: ["Mastering techniques specifically aimed at preventing LLMs from hallucinating completely", "Selecting suitable test automation approaches like keyword-driven testing", "Choosing the most appropriate LLM based on criteria such as its capability to be adapted or customized to perform specific test tasks", "Ensuring the validation data used in the initial development of the LLMs are of the highest quality"], answer: 2, explanation: "Testers need the knowledge and skill to assess LLM capabilities, compare candidate models, and select the one that can be best adapted or fine-tuned.", syllabusMapping: "GenAI-5.2.1 (K2)" },
+{ question: "What is the BEST approach for cultivating skills within test teams to specifically support the adoption of Generative AI?", options: ["Rely mainly on external expert courses", "Encourage independent experimentation without following a structured process", "Adopt a hands-on, gradual learning process supported by guided exercises, peer learning, and knowledge-sharing communities", "Rely mainly on theoretical courses from external experts"], answer: 2, explanation: "Focusing on developing practical skills through structured hands-on activities, peer learning, and internal knowledge-sharing communities is the recommended approach.", syllabusMapping: "GenAI-5.2.2 (K1)" },
+{ question: "Which AI approach requires manual feature selection and data preparation before model training?", options: ["Symbolic AI", "Classical machine learning", "Generative AI", "Deep learning"], answer: 1, explanation: "Classical machine learning uses a data-driven approach that heavily relies on manual data preparation and feature selection.", syllabusMapping: "GenAI-1.1.1 (K1)" },
+{ question: "What is the primary advantage of utilizing Small Language Models (SLMs) compared to Large Language Models (LLMs)?", options: ["They eliminate the non-deterministic behavior of GenAI", "They completely eliminate hallucinations", "They provide lightweight and focused GenAI solutions with fewer parameters", "They do not require tokenization"], answer: 2, explanation: "SLMs are specifically designed to provide lightweight, highly focused GenAI solutions that balance efficiency with task-specific language understanding.", syllabusMapping: "GenAI-1.1.2 (K2)" },
+{ question: "How do embeddings help LLMs understand relationships between words?", options: ["By converting text directly into executable code", "By ensuring the output is completely deterministic", "By assigning a fixed, random integer to each token", "By grouping tokens with similar meanings closely together in a high-dimensional vector space"], answer: 3, explanation: "Embeddings encode relationships into a high-dimensional vector space, naturally positioning similar concepts closely together.", syllabusMapping: "GenAI-1.1.2 (K2)" },
+{ question: "What is the primary purpose of instruction-tuning a foundation model?", options: ["To enhance its alignment with human instructions and improve usability", "To increase the context window size to unlimited tokens", "To completely eliminate hallucinations and reasoning errors", "To allow the model to automatically execute automated test scripts"], answer: 0, explanation: "Instruction-tuned LLMs are optimized for task adherence, following instructions, and producing aligned, usable responses.", syllabusMapping: "GenAI-1.1.3 (K2)" },
+{ question: "How can multimodal LLMs specifically assist in software testing?", options: ["By automatically fixing code defects", "By analyzing visual elements like GUI wireframes along with textual user stories to identify discrepancies", "By replacing the need for human testers entirely", "By reducing the energy consumption of test execution"], answer: 1, explanation: "Multimodal LLMs can simultaneously process both textual data and visual cues to increase overall test coverage and easily spot discrepancies.", syllabusMapping: "GenAI-1.1.4 (K2)" },
+{ question: "Which of the following is a recognized way LLMs support test automation?", options: ["Executing exploratory tests without human intervention", "Automatically deploying applications to production environments", "Suggesting improvements to existing test scripts and identifying appropriate test design techniques", "Preventing all future defects in the codebase"], answer: 2, explanation: "LLMs are highly capable of assisting testers by analyzing requirements, generating test conditions, and suggesting improvements to test scripts.", syllabusMapping: "GenAI-1.2.1 (K2)" },
+{ question: "What makes AI chatbots particularly effective for onboarding new testers?", options: ["They completely bypass the need for test management tools", "They automatically write and execute all regression tests", "They guarantee zero-defect code delivery", "They provide a conversational interface for quick access to testing knowledge and practices"], answer: 3, explanation: "AI chatbots provide accessible conversational interfaces allowing new testers to easily query and access testing knowledge and guidance.", syllabusMapping: "GenAI-1.2.2 (K2)" },
+{ question: "In a structured prompt, what is the purpose of specifying the 'Role' component?", options: ["To define the persona or perspective the GenAI should take", "To define the expected output format", "To provide the input data", "To restrict the length of the response"], answer: 0, explanation: "The 'Role' component explicitly defines the perspective or persona that the GenAI model should take when generating its response.", syllabusMapping: "GenAI-2.1.1 (K2)" },
+{ question: "Which component of a structured prompt dictates that the LLM must 'avoid using technical jargon'?", options: ["Instructions", "Constraints", "Input data", "Context"], answer: 1, explanation: "Constraints outline the specific restrictions or special considerations that the LLM must adhere to.", syllabusMapping: "GenAI-2.1.1 (K2)" },
+{ question: "If a tester provides exactly one example of a Gherkin scenario in the prompt to guide the LLM, what technique is being used?", options: ["Zero-shot prompting", "Prompt chaining", "One-shot prompting", "Meta prompting"], answer: 2, explanation: "One-shot prompting is a direct variation of few-shot prompting where exactly one example is provided to the LLM.", syllabusMapping: "GenAI-2.1.2 (K2)" },
+{ question: "Which of the following is TRUE about a 'user prompt'?", options: ["It is typically hidden from the chatbot's user", "It stays constant throughout the entire session", "It is only used to set the initial operational parameters", "It changes with each interaction and forms the immediate context for the LLM's response"], answer: 3, explanation: "The user prompt represents the actual input from the user. It changes with each interaction and forms the immediate, dynamic context for each response.", syllabusMapping: "GenAI-2.1.3 (K2)" },
+{ question: "How can an LLM assist during test analysis when provided with historical defect data and current requirements?", options: ["By prioritizing test conditions based on regulatory compliance and historical risk", "By compiling the application source code", "By executing performance tests automatically", "By setting the random seed for the testing framework"], answer: 0, explanation: "LLMs can prioritize test conditions based on risk level by analyzing and considering aspects such as historical defect data.", syllabusMapping: "GenAI-2.2.1 (K3)" },
+{ question: "What is a significant advantage of using GenAI for test data synthesis?", options: ["It guarantees that all test data will be deterministic", "It can simulate realistic scenarios without exposing actual sensitive user information", "It automatically creates relational databases", "It replaces the need for boundary value analysis"], answer: 1, explanation: "GenAI can create representative, data privacy-preserving synthetic test data that resembles production data without risking exposure.", syllabusMapping: "GenAI-1.2.1 (K2)" },
+{ question: "How can GenAI support automated regression testing regarding script maintenance?", options: ["By removing the need for a CI/CD pipeline", "By executing manual exploratory tests", "By automatically adjusting test scripts to handle minor UI or API changes, preventing unnecessary failures", "By completely rewriting the application's UI"], answer: 2, explanation: "GenAI can dynamically adapt to codebase changes, automatically adjusting test scripts to handle minor UI or API changes (self-healing).", syllabusMapping: "GenAI-2.2.3 (K3)" },
+{ question: "How does GenAI assist test managers in test control activities?", options: ["By physically reallocating hardware servers", "By firing underperforming testers", "By halting the CI/CD pipeline permanently", "By providing insights for reprioritizing tests, adjusting test schedules, and reallocating resources"], answer: 3, explanation: "By analyzing large amounts of test metrics, GenAI provides actionable insights that allow test managers to effectively reprioritize testing efforts.", syllabusMapping: "GenAI-2.2.4 (K3)" },
+{ question: "When evaluating an AI-generated defect report, which metric measures the degree to which the generated test cases correctly identify actual anomalies?", options: ["Precision", "Execution Success Rate", "Diversity", "Time Efficiency"], answer: 0, explanation: "Precision specifically evaluates the correctness of the generated output with respect to a specific objective without false positives.", syllabusMapping: "GenAI-2.3.1 (K2)" },
+{ question: "A test team gathers input from testers about the clarity of AI-generated test summaries and uses this to refine their prompts. Which technique is this?", options: ["Output analysis", "Integrating user feedback", "A/B testing of prompts", "Adjusting prompt length"], answer: 1, explanation: "Integrating user feedback involves actively gathering input from human testers about the usefulness and clarity of generated outputs.", syllabusMapping: "GenAI-2.3.2 (K2)" },
+{ question: "If an LLM misinterprets conditional logic when generating a decision table, what kind of error has it committed?", options: ["Hallucination", "Bias", "Reasoning error", "Data exfiltration"], answer: 2, explanation: "Reasoning errors occur when LLMs misinterpret logical structures, such as cause-and-effect relationships, math, or conditional logic.", syllabusMapping: "GenAI-3.1.1 (K1)" },
+{ question: "Why is domain expertise consultation important when verifying AI-generated test content?", options: ["Because experts can reprogram the neural network", "Because experts can increase the context window size", "Because experts can reduce the energy consumption of the LLM", "Because subject matter experts can capture nuanced insights that automated cross-verification tools might overlook"], answer: 3, explanation: "Domain expertise consultation is essential because human experts can capture nuanced business insights and validate contextual accuracy.", syllabusMapping: "GenAI-3.1.3 (K2)" },
+{ question: "How does dividing a complex prompt into manageable segments help mitigate testing risks?", options: ["It allows systematic verification of intermediate steps, detecting reasoning errors early", "It reduces the licensing cost of the LLM", "It ensures the LLM uses less electricity", "It completely prevents the possibility of data poisoning"], answer: 0, explanation: "Splitting complex prompts into smaller steps allows testers to systematically verify each output manually or automatically.", syllabusMapping: "GenAI-3.1.3 (K2)" },
+{ question: "Why might a tester choose NOT to lower the temperature setting to zero when prompting an LLM?", options: ["Because it increases the risk of data exfiltration", "Because it limits creativity and diversity, making outputs overly repetitive", "Because it makes the output entirely random", "Because it bypasses the system prompt"], answer: 1, explanation: "Lowering the temperature reduces randomness. However, this severely limits creativity and diversity, which might make test case generation overly repetitive.", syllabusMapping: "GenAI-3.1.4 (K1)" },
+{ question: "Which of the following is a compliance risk associated with using GenAI in testing?", options: ["Generating code in Python instead of Java", "Using an LLM that requires a high temperature setting", "Failing to adhere to data protection regulations like GDPR when processing sensitive data", "Failing to use A/B testing for prompts"], answer: 2, explanation: "Using GenAI tools without complying with data protection regulations such as the GDPR can lead to severe legal disputes and compliance risks.", syllabusMapping: "GenAI-3.2.1 (K2)" },
+{ question: "What happens in a 'malicious code generation' attack against an LLM used in testing?", options: ["The LLM's training data is flooded with fake test evaluations", "The LLM's context window is overloaded", "The LLM is tricked into ignoring UI defects", "The LLM is manipulated to generate backdoors or external command calls during use"], answer: 3, explanation: "Malicious code generation involves an attacker manipulating an LLM to intentionally generate dangerous code during its runtime use.", syllabusMapping: "GenAI-3.2.2 (K2)" },
+{ question: "Which data privacy mitigation strategy involves avoiding the processing of sensitive data unless legally permitted and using only the necessary amount of non-sensitive data?", options: ["Data minimization", "Data pseudonymization", "Data encryption", "Data exfiltration"], answer: 0, explanation: "Data minimization is a foundational privacy strategy that involves strictly limiting the amount of data processed to only what is absolutely necessary.", syllabusMapping: "GenAI-3.2.3 (K2)" },
+{ question: "How does the complexity of an LLM task relate to its environmental impact?", options: ["All tasks consume the exact same amount of energy", "Highly complex tasks, like generating images, consume significantly more computational resources and energy than simple text generation", "Text generation consumes more energy than image generation", "The environmental impact of GenAI is purely theoretical"], answer: 1, explanation: "The complexity of a task directly influences energy consumption. Generating a single image consumes substantially more computational power than generating text.", syllabusMapping: "GenAI-3.3.1 (K2)" },
+{ question: "Which regulation establishes a legal framework addressing AI risks and classifying applications by risk level?", options: ["NIST AI Risk Management Framework", "ISO/IEC 42001:2023", "EU AI Act", "ISO/IEC 23053:2022"], answer: 2, explanation: "The EU AI Act establishes a comprehensive legal framework addressing AI risks, explicitly classifying applications by their risk level.", syllabusMapping: "GenAI-3.4.1 (K1)" },
+{ question: "During the preprocessing phase of RAG, why are large documents broken into smaller chunks (e.g., 256-512 tokens)?", options: ["To ensure focused retrieval and compatibility with the model's context window limit", "To permanently delete irrelevant information", "To translate the text into multiple languages", "To increase the temperature parameter"], answer: 0, explanation: "Large documents are broken into smaller chunks to ensure focused semantic retrieval and to fit within the LLM's strict context window limit.", syllabusMapping: "GenAI-4.1.2 (K2)" },
+{ question: "What capability allows an LLM-powered agent to perform tasks or 'act' beyond simple conversational responses?", options: ["The ability to lower its own temperature setting", "The ability to invoke a predefined set of functions or 'tools'", "The ability to bypass authentication components", "The ability to delete its training data"], answer: 1, explanation: "LLM-powered agents can perform tasks upon external systems by invoking a predefined set of functions or APIs, commonly referred to as 'tools'.", syllabusMapping: "GenAI-4.1.3 (K2)" },
+{ question: "Because LLM-powered agents can suffer from hallucinations, what is a recommended mitigation strategy when using them in test processes?", options: ["Allowing them full unrestricted access to production databases", "Only using them for tasks that have zero risk", "Implementing automated verification procedures for the agent's results or using semi-autonomous agents for critical tasks", "Disabling their ability to communicate with other agents"], answer: 2, explanation: "Because agents can hallucinate, risks must be carefully mitigated by implementing automated verification procedures or using semi-autonomous agents.", syllabusMapping: "GenAI-4.1.3 (K2)" },
+{ question: "What is a major challenge of fine-tuning GenAI models related to 'opacity'?", options: ["The model becomes too large to store on a standard hard drive", "The lack of transparency in how the model makes decisions complicates debugging and validation", "The model automatically deletes its previous training data", "The model can only be accessed via a command-line interface"], answer: 1, explanation: "Opacity refers to the 'black box' lack of transparency in how an LLM makes its decisions, which severely complicates debugging after fine-tuning.", syllabusMapping: "GenAI-4.2.1 (K2)" },
+{ question: "When an organization chooses to develop an in-house LLM-powered test tool, what is a primary advantage despite the high operational costs?", options: ["It requires absolutely no technical expertise to implement", "It completely eliminates the need for prompt engineering", "It offers comprehensive control over data privacy and security risks", "It guarantees that the model will never hallucinate"], answer: 2, explanation: "Developing an in-house LLM-powered test tool offers the organization comprehensive, full-stack control over data privacy and security risks.", syllabusMapping: "GenAI-4.2.2 (K2)" },
+{ question: "To ensure compliance with ethical guidelines, what should organizations establish regarding the use of GenAI?", options: ["Rules that forbid the use of any AI tools", "Mandates that AI must execute all tests in production", "Policies that allow unrestricted use of public LLMs", "Process guidelines, transparency obligations, and quality gates with reviews of generated testware"], answer: 3, explanation: "Organizations must establish strict process guidelines, transparency obligations, and mandatory quality gates for human review to ensure compliance.", syllabusMapping: "GenAI-3.4.1 (K1)" },
+{ question: "When selecting an LLM for software testing, why is 'community and support' an important criterion?", options: ["Active community support and detailed documentation aid in implementation and troubleshooting", "A larger community guarantees the LLM will have lower recurring costs", "Community support eliminates the need for internal test managers", "Models with community support do not require fine-tuning"], answer: 0, explanation: "Community and support is an important criterion because active community forums and documentation greatly aid internal teams in troubleshooting.", syllabusMapping: "GenAI-5.1.3 (K2)" },
+{ question: "In which phase of GenAI adoption does an organization focus on continuous monitoring, measurement, and managing the transformation for scalable benefits?", options: ["Discovery", "Utilization and iteration", "Initiation and usage definition", "Experimentation and refinement"], answer: 1, explanation: "The 'Utilization and iteration' phase is when organizations continuously monitor progress and manage the transformation for scalable benefits.", syllabusMapping: "GenAI-5.1.4 (K1)" },
+{ question: "What essential skill must testers develop to protect data security when sharing testware with LLMs?", options: ["Prompt chaining to hide the data", "Increasing the temperature parameter", "Data sanitization, which involves removing or masking sensitive, personal, or confidential information", "Using classical machine learning instead of GenAI"], answer: 2, explanation: "Data sanitization involves rigorously removing or masking sensitive information before sharing data with external models to preserve strict data privacy.", syllabusMapping: "GenAI-5.2.1 (K2)" },
+{ question: "What is a 'prompt pattern' in the context of building GenAI capabilities within a test team?", options: ["A specific type of neural network architecture", "A metric used to evaluate the execution success rate", "A regulatory framework for AI compliance", "A reusable template for crafting effective prompts to guide GenAI toward consistent outputs"], answer: 3, explanation: "A prompt pattern is a reusable structural blueprint for crafting effective prompts to ensure consistent and high-quality LLM outputs.", syllabusMapping: "GenAI-5.2.2 (K1)" },
+{ question: "How do internal communities of practice support ongoing GenAI knowledge sharing in a test team?", options: ["By holding regular meetings to highlight successful applications, discuss challenges, and share prompt libraries", "By outsourcing all GenAI training", "By enforcing strict penalties for hallucinations", "By isolating testers so they develop unique prompt strategies"], answer: 0, explanation: "Holding regular meetings to collaboratively discuss challenges and openly share successful prompt libraries is an essential learning method.", syllabusMapping: "GenAI-5.2.2 (K1)" },
+{ question: "How does the role of a traditional tester evolve in an AI-enabled test organization?", options: ["Testers become purely focused on manual exploratory testing", "Testers become AI-assisted test specialists, focusing on prompt refinement, output review, and maintaining prompt libraries", "Testers stop writing test cases entirely and focus only on coding", "Testers take over the responsibilities of the CISO"], answer: 1, explanation: "Testers evolve into AI-assisted testing specialists. Their tasks expand to actively guiding the AI through prompts and rigorously verifying the generated testware.", syllabusMapping: "GenAI-5.2.3 (K1)" },
+{ question: "In an AI-enabled test organization, what new management skill is required of test managers?", options: ["Writing the source code for the fine-tuned LLM", "Performing all manual data sanitization tasks", "Coordinating and overseeing hybrid teams consisting of both human testers and GenAI-powered test agents", "Managing the physical hardware servers"], answer: 2, explanation: "It is the responsibility of the test manager to coordinate and oversee hybrid teams of both traditional testing competencies and AI agents.", syllabusMapping: "GenAI-5.2.3 (K1)" },
+{ question: "How can an LLM support the generation of test oracles?", options: ["By autonomously executing all exploratory tests", "By compiling the application's source code", "By manually rewriting the requirements documents", "By synthesizing requirements to generate expected results, creating a baseline to compare against actual software outputs"], answer: 3, explanation: "LLMs can solve the test oracle problem by synthesizing requirements to generate expected results, creating a baseline to compare against actual software outputs.", syllabusMapping: "GenAI-1.2.1 (K2)" },
+{ question: "What does the 'Recall' metric measure when evaluating LLM outputs for testing?", options: ["The ability of a model to identify all relevant instances within a dataset, ensuring that critical edge cases or valid partitions are not omitted", "The amount of time the LLM takes to generate a complete test suite", "The grammatical correctness of the generated Gherkin test cases", "The degree to which the generated test cases are factually incorrect"], answer: 0, explanation: "Recall specifically measures the ability of a model to identify all relevant instances within a dataset, ensuring that generated test suites do not omit critical edge cases.", syllabusMapping: "GenAI-2.3.1 (K2)" },
+{ question: "Which hallucination detection approach involves comparing AI-generated output with existing documentation and known system behavior?", options: ["Output testing", "Cross-verification", "Temperature adjustment", "RAG"], answer: 1, explanation: "Cross-verification is a detection approach that involves directly comparing AI-generated output with existing documentation and known system behavior to spot hallucinations.", syllabusMapping: "GenAI-3.1.3 (K2)" },
+{ question: "In an LLM-powered test infrastructure, what is the role of the 'post-processing component'?", options: ["It tokenizes the initial user prompt", "It stores the high-dimensional embeddings", "It refines the LLM's raw output to ensure it aligns with the test conditions before presenting it to the front-end", "It acts as the conversational chatbot interface"], answer: 2, explanation: "The post-processing component enhances and filters the LLM’s raw output, ensuring its responses align with the expected formats before being presented to the user.", syllabusMapping: "GenAI-4.1.1 (K2)" },
+{ question: "What activities are typical during the 'Discovery' phase of GenAI adoption?", options: ["Fully integrating GenAI into the CI/CD pipeline", "Establishing a permanent LLMOps framework", "Conducting organization-wide security audits", "Training test teams on GenAI concepts, providing access to models, and experimenting with initial use cases"], answer: 3, explanation: "The Discovery phase focuses heavily on early awareness, training test teams, providing access to models, and experimenting with safe initial use cases.", syllabusMapping: "GenAI-5.1.4 (K1)" },
+{ question: "How are images processed by multimodal LLMs before being fed into the transformer model?", options: ["They are converted into natural language text by a classic machine learning algorithm", "They are converted into high-dimensional embeddings using vision-language models", "They are discarded because transformers only process textual tokens", "They are translated directly into source code representing the pixel grid"], answer: 1, explanation: "To handle various modalities, images are converted into embeddings using vision-language models before being processed in the transformer model.", syllabusMapping: "GenAI-1.1.4 (K2)" },
+{ question: "Which type of Large Language Model specifically emphasizes capabilities such as chain-of-thought reasoning and multi-step problem-solving?", options: ["Instruction-tuned LLMs", "Small Language Models (SLMs)", "Reasoning LLMs", "Foundation LLMs"], answer: 2, explanation: "Reasoning models extend instruction-tuned models by emphasizing structured cognitive abilities such as logical inference, multi-step problem-solving, and chain-of-thought reasoning.", syllabusMapping: "GenAI-1.1.3 (K2)" },
+{ question: "What is a key limitation of the transformer model architecture when predicting the next token during text generation?", options: ["It can only process structured numerical data", "It generates new text that is statistically plausible based on training data, but plausible is not necessarily correct", "It requires rule-based symbolic logic to generate any response", "It completely eliminates the risk of non-deterministic behavior"], answer: 1, explanation: "The transformer model can be used to generate new text that is statistically plausible, based on training data and the prompt, but plausible is not necessarily correct.", syllabusMapping: "GenAI-1.1.2 (K2)" },
+{ question: "Which statement best describes the difference between Deep Learning and Generative AI?", options: ["Deep learning requires manual feature selection, whereas Generative AI uses symbolic logic", "Generative AI is a subset of classical machine learning, while Deep Learning uses rule-based systems", "Generative AI uses deep learning techniques to create new content by learning and mimicking patterns from its training data", "There is no difference; the terms are interchangeable"], answer: 2, explanation: "Generative AI uses deep learning techniques to create new content (text, images, code) by learning and mimicking patterns from its training data.", syllabusMapping: "GenAI-1.1.1 (K1)" },
+{ question: "Which type of AI relies on extracting knowledge using symbols and logical rules to mimic human decision-making?", options: ["Deep Learning", "Classical Machine Learning", "Symbolic AI", "Generative AI"], answer: 2, explanation: "Symbolic AI uses a rule-based system to mimic human decision-making, representing knowledge using symbols and logical rules.", syllabusMapping: "GenAI-1.1.1 (K1)" }
+];
 
-    let currentQuestionIndex = 0;
-    let score = 0;
+let currentQuestionIndex = 0; let score = 0;
+const questionEl = document.getElementById("question"), optionsEl = document.getElementById("options"), explanationEl = document.getElementById("explanation"), nextBtn = document.getElementById("next-btn"), progressEl = document.getElementById("progress"), questionContainer = document.getElementById("question-container"), resultsContainer = document.getElementById("results"), scoreEl = document.getElementById("score");
 
-    const questionEl = document.getElementById("question");
-    const optionsEl = document.getElementById("options");
-    const explanationEl = document.getElementById("explanation");
-    const nextBtn = document.getElementById("next-btn");
-    const progressEl = document.getElementById("progress");
-    const questionContainer = document.getElementById("question-container");
-    const resultsContainer = document.getElementById("results");
-    const scoreEl = document.getElementById("score");
+function loadQuestion() {
+    explanationEl.style.display = "none"; nextBtn.style.display = "none"; optionsEl.innerHTML = "";
+    const currentData = quizData[currentQuestionIndex];
+    questionEl.innerText = currentData.question;
+    progressEl.innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+    currentData.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.innerText = option; button.classList.add("option-btn");
+        button.onclick = () => selectAnswer(index, button);
+        optionsEl.appendChild(button);
+    });
+}
 
-    function loadQuestion() {
-        explanationEl.style.display = "none";
-        nextBtn.style.display = "none";
-        optionsEl.innerHTML = "";
-        
-        const currentData = quizData[currentQuestionIndex];
-        
-        questionEl.innerText = currentData.question;
-        progressEl.innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+function selectAnswer(selectedIndex, selectedButton) {
+    const currentData = quizData[currentQuestionIndex];
+    const allButtons = optionsEl.querySelectorAll(".option-btn");
+    allButtons.forEach(btn => btn.disabled = true);
+    if (selectedIndex === currentData.answer) { selectedButton.classList.add("correct"); score++; } 
+    else { selectedButton.classList.add("wrong"); allButtons[currentData.answer].classList.add("correct"); }
+    explanationEl.innerHTML = `<strong>Explanation:</strong> ${currentData.explanation}<span class="syllabus-mapping"><strong>Syllabus Mapping:</strong> ${currentData.syllabusMapping}</span>`;
+    explanationEl.style.display = "block"; nextBtn.style.display = "block";
+    if (currentQuestionIndex === quizData.length - 1) nextBtn.innerText = "Show Results";
+}
 
-        currentData.options.forEach((option, index) => {
-            const button = document.createElement("button");
-            button.innerText = option;
-            button.classList.add("option-btn");
-            button.onclick = () => selectAnswer(index, button);
-            optionsEl.appendChild(button);
-        });
-    }
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < quizData.length) loadQuestion(); else showResults();
+}
 
-    function selectAnswer(selectedIndex, selectedButton) {
-        const currentData = quizData[currentQuestionIndex];
-        const allButtons = optionsEl.querySelectorAll(".option-btn");
+function showResults() {
+    questionContainer.style.display = "none"; resultsContainer.style.display = "block";
+    const percentage = Math.round((score / quizData.length) * 100);
+    scoreEl.innerText = `You scored ${score} out of ${quizData.length} (${percentage}%)`;
+}
 
-        allButtons.forEach(btn => btn.disabled = true);
+function restartQuiz() {
+    currentQuestionIndex = 0; score = 0; questionContainer.style.display = "block"; resultsContainer.style.display = "none"; nextBtn.innerText = "Next Question"; loadQuestion();
+}
 
-        if (selectedIndex === currentData.answer) {
-            selectedButton.classList.add("correct");
-            score++;
-        } else {
-            selectedButton.classList.add("wrong");
-            allButtons[currentData.answer].classList.add("correct");
-        }
-
-        // NEW: This code now renders both the explanation and the syllabus mapping!
-        explanationEl.innerHTML = `
-            <strong>Explanation:</strong> ${currentData.explanation}
-            <span class="syllabus-mapping"><strong>Syllabus Mapping:</strong> ${currentData.syllabusMapping}</span>
-        `;
-        explanationEl.style.display = "block";
-        nextBtn.style.display = "block";
-        
-        if (currentQuestionIndex === quizData.length - 1) {
-            nextBtn.innerText = "Show Results";
-        }
-    }
-
-    function nextQuestion() {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < quizData.length) {
-            loadQuestion();
-        } else {
-            showResults();
-        }
-    }
-
-    function showResults() {
-        questionContainer.style.display = "none";
-        resultsContainer.style.display = "block";
-        
-        const percentage = Math.round((score / quizData.length) * 100);
-        scoreEl.innerText = `You scored ${score} out of ${quizData.length} (${percentage}%)`;
-    }
-
-    function restartQuiz() {
-        currentQuestionIndex = 0;
-        score = 0;
-        questionContainer.style.display = "block";
-        resultsContainer.style.display = "none";
-        nextBtn.innerText = "Next Question";
-        loadQuestion();
-    }
-
-    loadQuestion();
+loadQuestion();
 </script>
-
 </body>
 </html>
